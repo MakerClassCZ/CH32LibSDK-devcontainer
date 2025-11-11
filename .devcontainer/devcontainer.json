@@ -1,0 +1,55 @@
+{
+  "name": "CH32LibSDK",
+
+  // ============================================
+  // Image Selection - Choose Your Toolchain
+  // ============================================
+  // Uncomment ONE of the following image options:
+
+  // Option 1: Clang + libgcc
+  // - Modern LLVM/Clang 19 compiler
+  // - Uses WCH's libgcc for runtime support
+  "image": "ghcr.io/makerclasscz/ch32libsdk:clang-libgcc",
+
+  // Option 2: GCC WCH (OFFICIAL)
+  // - Official WCH RISC-V GCC toolchain
+  // - Most stable and proven option
+  // "image": "ghcr.io/makerclasscz/ch32libsdk:gcc-wch",
+
+  // Option 3: Clang + compiler-rt (EXPERIMENTAL - Pure LLVM)
+  // - Fully LLVM-based toolchain (no WCH dependencies)
+  // - Uses compiler-rt instead of libgcc
+  // "image": "ghcr.io/makerclasscz/ch32libsdk:clang-compiler-rt",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cmake-tools"
+      ],
+      "settings": {
+        "C_Cpp.default.compilerPath": "${containerEnv:CC}",
+        "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+        "cmake.configureOnOpen": true,
+        "cmake.buildDirectory": "${workspaceFolder}/build",
+        "cmake.configureSettings": {
+          "CMAKE_TOOLCHAIN_FILE": "${containerEnv:CMAKE_TOOLCHAIN_FILE}"
+        },
+        "cmake.generator": "Ninja",
+        "cmake.skipConfigureIfCacheExists": false
+      }
+    }
+  },
+
+  "mounts": [],
+
+  "runArgs": [
+    "--privileged",
+    "--device-cgroup-rule=c 189:* rmw"
+  ],
+  
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+  
+  "postCreateCommand": "ch32-info"
+}
